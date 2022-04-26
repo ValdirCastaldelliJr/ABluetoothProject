@@ -4,12 +4,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
-
+    compileSdk 31
+    buildFeatures {
+        viewBinding = true
+    }
     defaultConfig {
         applicationId "com.castaldelli.abluetoothproject"
-        minSdk 21
-        targetSdk 32
+        minSdk 23
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
