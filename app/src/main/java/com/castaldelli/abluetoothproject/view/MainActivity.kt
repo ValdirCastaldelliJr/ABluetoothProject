@@ -1,4 +1,4 @@
-package com.castaldelli.abluetoothproject
+package com.castaldelli.abluetoothproject.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -9,11 +9,13 @@ import android.bluetooth.BluetoothProfile
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.castaldelli.abluetoothproject.R
+import com.castaldelli.abluetoothproject.data.Device
 import com.castaldelli.abluetoothproject.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ActivityResultCallback<Int> {
@@ -23,8 +25,6 @@ class MainActivity : AppCompatActivity(), ActivityResultCallback<Int> {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
     private val requestCode = 124
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Binding //
@@ -38,19 +38,20 @@ class MainActivity : AppCompatActivity(), ActivityResultCallback<Int> {
         bluetoothManager = getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager.adapter
 
+        // Permission handle
 
     }
 
+    @SuppressLint("MissingPermission")
     private fun clickSearchDevicesButton(){
         check()// FIXME: Check permission
 
         val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-        val devices = StringBuffer()
-        pairedDevices?.forEach { device ->
-            device.bondState
-            devices.append("name: ${device.name} type: ${whichType(device.type)} isConnected: ${isConnected(device)}\n")
-        }
-        binding.tHello.text = devices.toString()
+        val devices = arrayListOf<Device>()
+        pairedDevices?.forEach { devices.add(Device(it.name,isConnected(it), it.type)) }
+
+        binding.rvDevices.layoutManager = LinearLayoutManager(this)
+        binding.rvDevices.adapter = ItemDeviceAdapter(devices)
 
     }
 
@@ -69,7 +70,6 @@ class MainActivity : AppCompatActivity(), ActivityResultCallback<Int> {
             val connected = m.invoke(device) as Boolean
             connected
         } catch (e:Exception) {
-            Log.e("OOPS", e.message, e)
             false
         }
     }
