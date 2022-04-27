@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,8 +26,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bluetoothManager: BluetoothManager
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    private val requestCode = 124
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // Binding //
         super.onCreate(savedInstanceState)
@@ -37,30 +36,37 @@ class MainActivity : AppCompatActivity() {
 
         bluetoothManager = getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager.adapter
-
     }
 
     override fun onStart() {
         super.onStart()
-        clickSearchDevicesButton()
+        //FIXME solicitar permissionamento para versão de API31
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            clickSearchDevicesButton()
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun clickSearchDevicesButton(){
-
-        if (bluetoothAdapter?.isEnabled == true) {
-            val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-
-            val devices = arrayListOf<Device>()
-            pairedDevices?.forEach {
-                devices.add(Device(it.name, isConnected(it), it.type))
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                Toast.makeText(this, "Work in progress for API31", Toast.LENGTH_SHORT).show()
             }
+            bluetoothAdapter?.isEnabled == true -> {
+                val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
 
-            binding.rvDevices.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-            binding.rvDevices.adapter = ItemDeviceAdapter(devices)
+                val devices = arrayListOf<Device>()
+                pairedDevices?.forEach {
+                    devices.add(Device(it.name, isConnected(it), it.type))
+                }
 
-        } else {
-            Snackbar.make(binding.root, R.string.turn_on_bt,Snackbar.LENGTH_SHORT).show()
+                binding.rvDevices.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                binding.rvDevices.adapter = ItemDeviceAdapter(devices)
+
+            }
+            else -> {
+                Snackbar.make(binding.root, R.string.turn_on_bt,Snackbar.LENGTH_SHORT).show()
+            }
         }
 
     }
@@ -77,15 +83,17 @@ class MainActivity : AppCompatActivity() {
 
    @RequiresApi(Build.VERSION_CODES.S)
     private fun checkPermissionForAndroidS(){
+       //FIXME not complete
         when {
-            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED -> {
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED -> {
                 // You can use the API that requires the permission.
             }
             shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT) -> {
-            showUserInformationDialog(R.string.perm_dialog_msg)
-        }
+                showUserInformationDialog(R.string.perm_dialog_msg)
+            }
             else -> {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT),requestCode )
+                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT),123)
                 
             }
         }
