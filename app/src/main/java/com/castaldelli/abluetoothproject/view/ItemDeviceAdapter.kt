@@ -1,6 +1,5 @@
 package com.castaldelli.abluetoothproject.view
 
-import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
@@ -26,18 +25,36 @@ class ItemDeviceAdapter(private val devices: List<Device>) : RecyclerView.Adapte
         with(holder){
             with(devices[position]){
                 binding.tDeviceName.text = name
-                binding.tDeviceStatus.text = if(isConnected) "Device is connected" else "Device is disconnected"
-                binding.iDeviceIco.setImageDrawable(getDeviceIco(type, isConnected))
+                binding.iDeviceIco.setImageDrawable(getDeviceIco(isConnected))
+                binding.iDeviceIco.setBackgroundColor(getBackgroundColor(isConnected))
+                binding.lPair.text = getStatus(isConnected)
             }
         }
     }
 
-    private fun getDeviceIco(type:Int, connected: Boolean) : Drawable? {
+    private fun getStatus(connected: Boolean) : CharSequence {
+        return if (connected) {
+            context.getText(R.string.connect)
+        } else {
+            context.getText(R.string.paired)
+        }
+    }
+
+    private fun getBackgroundColor(connected: Boolean) : Int {
+        return context.getColor(
+            if (connected)
+                R.color.primaryColor
+            else
+                R.color.primaryDarkColor
+        )
+    }
+
+    private fun getDeviceIco(connected: Boolean) : Drawable? {
         return AppCompatResources.getDrawable(context,
-            when(type) {
-                BluetoothProfile.HEADSET -> R.drawable.ic_headset
-                else -> if (connected) R.drawable.ic_bluetooth_connected else R.drawable.ic_bluetooth_disconnected
-            }
+            if (connected)
+                R.drawable.ic_bluetooth_connected_white
+            else
+                R.drawable.ic_bluetooth_disconnected_white
         )
     }
 }

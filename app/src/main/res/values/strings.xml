@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">A Simple Bluetooth App</string>
-    <string name="search_devices">Search devices</string>
+    <string name="search_devices">Refresh devices</string>
     <string name="perm_dialog_title">We need your permission to use bluetooth</string>
     <string name="perm_dialog_msg">We need your permission to use your Bluetooth in order to connect this device to your bluetooth device.\n\nWe do not maintain any information about this use, location or hardware status. If you do not grant this permission we will not be able to connect your device.\n\nYou can revoke this permission anytime in the application settings in your device.</string>
     <string name="ok">Ok</string>
     <string name="device_name">Name:</string>
     <string name="is_connected">Status:</string>
+    <string name="connect">Connected</string>
+    <string name="disconnect">Disconnected</string>
+    <string name="paired">Paired</string>
+    <string name="turn_on_bt">Turn your Bluetooh on.</string>
 </resources>
