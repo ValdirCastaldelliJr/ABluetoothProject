@@ -29,9 +29,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Binding //
         super.onCreate(savedInstanceState)
+
+        //comentario adicionado de teste
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Actions //
         binding.bSearch.setOnClickListener { clickSearchDevicesButton() }
 
         bluetoothManager = getSystemService(BluetoothManager::class.java)
